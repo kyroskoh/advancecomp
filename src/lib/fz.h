@@ -86,6 +86,7 @@ adv_fz* fzopennullwrite(const char* file, const char* mode);
 adv_fz* fzopenzipuncompressed(const char* file, unsigned offset, unsigned size);
 adv_fz* fzopenzipcompressed(const char* file, unsigned offset, unsigned size_compressed, unsigned size_uncompressed);
 adv_fz* fzopenmemory(const unsigned char* data, unsigned size);
+adv_fz* fzopenmemorywrite(void);
 
 unsigned fzread(void *buffer, unsigned size, unsigned number, adv_fz* f);
 unsigned fzwrite(const void *buffer, unsigned size, unsigned number, adv_fz* f);

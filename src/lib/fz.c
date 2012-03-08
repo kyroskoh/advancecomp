@@ -468,6 +468,20 @@ adv_fz* fzopenmemory(const unsigned char* data, unsigned size)
 }
 
 /**
+ * File interface for writing to memory.
+ */
+adv_fz* fzopenmemorywrite(void)
+{
+	adv_fz* f = fzalloc();
+	if (!f)
+		return 0;
+
+	f->type = fz_memory_write;
+
+	return f;
+}
+
+/**
  * Close a file.
  * The semantic is like the C fclose() function.
  */

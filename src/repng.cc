@@ -266,6 +266,51 @@ void png_print(const string& path)
 	fzclose(f_in);
 }
 
+void rezip_stdin()
+{
+	adv_fz* f_in;
+	adv_fz* f_out;
+
+	// Read everything from stdin.
+	unsigned char *input = NULL;
+	unsigned int length = 0;
+
+	while(!feof(stdin)) {
+		input = (unsigned char *)realloc(input, length + 1024);
+		if (!input) throw;
+		length += fread(input + length, sizeof(unsigned char), 1024, stdin);
+		if (ferror(stdin)) {
+			fprintf(stderr, "Error reading from stdin\n");
+			throw;
+		}
+	}
+
+	f_in = fzopenmemory(input, length);
+	f_out = fzopenmemorywrite();
+
+	try {
+		convert_f(f_in, f_out);
+	} catch (...) {
+		free(input);
+		fzclose(f_in);
+		fzclose(f_out);
+		throw;
+	}
+
+	if (f_out->virtual_size < f_in->virtual_size) {
+		// The rezipped version is smaller than the input.
+		fwrite(f_out->data_write, sizeof(unsigned char), f_out->virtual_size, stdout);
+	} else {
+		// The rezipped version is bigger than the input.
+		fwrite(f_in->data_read, sizeof(unsigned char), f_in->virtual_size, stdout);
+	}
+
+	fclose(stdout);
+	free(input);
+	fzclose(f_in);
+	fzclose(f_out);
+}
+
 void rezip_single(const string& file, unsigned long long& total_0, unsigned long long& total_1)
 {
 	unsigned size_0;
@@ -369,6 +414,9 @@ void usage()
 
 	cout << "Usage: advpng [options] [FILES...]" << endl;
 	cout << endl;
+	cout << "If no files are specified, standard input will be recompressed to standard output." << endl;
+	cout << "This will automatically trigger quiet mode." << endl;
+	cout << endl;
 	cout << "Modes:" << endl;
 	cout << "  " SWITCH_GETOPT_LONG("-l, --list          ", "-l") "  List the content of the files" << endl;
 	cout << "  " SWITCH_GETOPT_LONG("-z, --recompress    ", "-z") "  Recompress the specified files" << endl;
@@ -467,7 +515,10 @@ void process(int argc, char* argv[])
 
 	switch (cmd) {
 	case cmd_recompress :
-		rezip_all(argc - optind, argv + optind);
+		if (argc - optind > 0)
+			rezip_all(argc - optind, argv + optind);
+		else
+			rezip_stdin();
 		break;
 	case cmd_list :
 		list_all(argc - optind, argv + optind);
