@@ -297,7 +297,7 @@ void rezip_stdin()
 		throw;
 	}
 
-	if (f_out->virtual_size < f_in->virtual_size) {
+	if (f_out->virtual_size < f_in->virtual_size || opt_force) {
 		// The rezipped version is smaller than the input.
 		fwrite(f_out->data_write, sizeof(unsigned char), f_out->virtual_size, stdout);
 	} else {
