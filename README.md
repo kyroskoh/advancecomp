@@ -13,7 +13,8 @@ The files in the `src/` directory are the unpacked contents of the [`advancecomp
 
 ### Usage
 
-This fork of the [AdvanceCOMP][] tools does not modify any of the original tools, but adds an additional tool&ndash; `advpngidat`.
+This fork of the [AdvanceCOMP][] tools adds support for reading files from standard input
+and writing the recompressed result to standard output. It also adds an additional tool&ndash; `advpngidat`.
 
 The `advpngidat` tool has a couple of options, which you can view via `--help`, but there is really only one option that is used in practice: `-z4`.  This specifies that the original `.png` file should be recompressed using the highest compression / maximum effort setting.  For example:
 
